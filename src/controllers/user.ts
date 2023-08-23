@@ -14,7 +14,6 @@ export const register = async (req: Request, res: Response) => {
             first_name,
             last_name,
             email,
-            username,
             bYear,
             bMonth,
             bDay,
@@ -24,7 +23,7 @@ export const register = async (req: Request, res: Response) => {
 
 
         //validations
-        const requiredFields = ['first_name', 'last_name', 'email', 'username', 'bYear', 'bMonth', 'bDay', 'gender', 'password',];
+        const requiredFields = ['first_name', 'last_name', 'email', 'bYear', 'bMonth', 'bDay', 'gender', 'password',];
 
         if (!validateRequiredFields(req.body, requiredFields))
             return res.status(400).json({ message: "some datas are missing" });
@@ -41,7 +40,7 @@ export const register = async (req: Request, res: Response) => {
         if (emailExists) return res.status(400).json({ message: "This email is already in use!" })
 
         const hashedPassword = await bcrypt.hash(password, 12)
-        const newUsername: Promise<string> = validateUsername(first_name + last_name)
+        const newUsername: string = await validateUsername(first_name + last_name)
 
         const user = await new UserModel({
             first_name,
@@ -59,9 +58,9 @@ export const register = async (req: Request, res: Response) => {
 
         const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`
 
-        const token = generateToken({ id: user._id.toString() }, "7d")
+        const token: string = generateToken({ id: user._id.toString() }, "7d")
 
-        sendVerificationEmail(user.email, user.first_name, url)
+        // sendVerificationEmail(user.email, user.first_name, url)
 
         return res.status(200).json({
             id: user._id,
@@ -125,5 +124,15 @@ export const login = async (req: Request, res: Response) => {
     } catch (error: any) {
         console.log("[LOGIN_USER]", error.message)
         return res.status(500).json(error)
+    }
+}
+
+export const auth = (req: Request,res: Response) => {
+    try{
+        // @ts-ignore
+        res.status(200).json(req.user)
+    }catch(error: any){
+        res.status(500).json(error.message)
+        console.log("[AUTH_USER]", error)
     }
 }

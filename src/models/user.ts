@@ -132,7 +132,19 @@ const UserSchema = new mongoose.Schema({
                 default: new Date(),
             }
         }
-    ]
+    ],
+    resetPassToken: {
+        expDate: {
+            type: Date
+        },
+        token: {
+            type: String
+        },
+    },
+    profileShorcuts: {
+        type: Array,
+        default: []
+    }
 }, {
     timestamps: true,
 })

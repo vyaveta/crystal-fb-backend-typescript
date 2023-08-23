@@ -10,7 +10,7 @@ const userRouter = require('./routes/user.ts')
 
 dotenv.config()
 
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 9090
 
 const app = express()
 
@@ -36,7 +36,7 @@ app.use("/", userRouter )
 
 
 const server = http.createServer(app)
-server.listen(PORT, () => console.log(`server running on http://localhost:8080`))
+server.listen(PORT, () => console.log(`server running on http://localhost:${PORT}`))
 
 
 mongoose.Promise = Promise

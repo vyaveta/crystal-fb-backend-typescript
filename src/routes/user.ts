@@ -1,17 +1,17 @@
-import {register} from '../controllers/user'
+import { authUser } from '../middlewares/auth'
+import { register, login, activateAccount, auth} from '../controllers/user'
 
 const express = require('express')
 // const { register, activateAccount, login } = require('../controllers/user')
 const userRouter = express.Router()
 
 userRouter.post('/register', register)
-// userRouter.post('/register', (req,res) => {
-//     console.log("hello world")
-// })
 
-// router.post('/activate',activateAccount)
+userRouter.post('/activate',activateAccount)
 
-// router.post('/login', login)
+userRouter.post('/login', login)
+
+userRouter.post('/auth',authUser, auth)
 
 
 module.exports = userRouter

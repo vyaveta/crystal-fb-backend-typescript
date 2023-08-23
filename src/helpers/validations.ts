@@ -6,7 +6,10 @@ export const validateEmail = (email: string) => email.match(/^([a-z\d\.-]+)@([a-
 // this function returns true if all the required fields are present in the data and returns false if any of the field is absent
 export const validateRequiredFields = (data: Record<string, any>, requiredFields: string[]): boolean => {
     const missingFields = requiredFields.filter(field => !data[field])
-    if(missingFields.length > 0) return false
+    if(missingFields.length > 0) {
+        console.log("[MISSING_FIELDS]",missingFields)
+        return false
+    }
     return true
 }
 
@@ -15,8 +18,8 @@ export const validateLength = (data: string, min: number, max: number): boolean 
     return true
 }
 
-export const validateUsername = async (username: string): Promise<string> => {
-    let flag = false
+export const validateUsername = async (username: string) => {
+    let flag = false 
     do {
         let checkUsername = await UserModel.findOne({username})
         if(checkUsername){
