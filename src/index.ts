@@ -7,6 +7,7 @@ import cors from "cors"
 import mongoose from "mongoose"
 import dotenv from "dotenv"
 const userRouter = require('./routes/user.ts')
+import uploadRouter from "./routes/upload"
 
 dotenv.config()
 
@@ -33,6 +34,7 @@ app.options("*", function (req, res, next) {
 });
 
 app.use("/", userRouter )
+app.use("/upload", uploadRouter )
 
 
 const server = http.createServer(app)

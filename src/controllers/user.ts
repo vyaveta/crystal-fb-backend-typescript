@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { UserDetails } from "../interfaces/request-body.interface"
+import { UserDetails, injectedRequest } from "../interfaces/request-body.interface"
 import { validateEmail, validateLength, validateRequiredFields, validateUsername } from "../helpers/validations"
 import { UserModel } from "../models/user"
 import bcrypt from "bcrypt"
@@ -10,6 +10,8 @@ import jwt from "jsonwebtoken"
 
 export const register = async (req: Request, res: Response) => {
     try {
+
+        console.log(req.body,'Is the req body')
         const {
             first_name,
             last_name,
@@ -54,13 +56,13 @@ export const register = async (req: Request, res: Response) => {
             password: hashedPassword,
         }).save();
 
-        const emailVerificationToken = generateToken({ id: user._id.toString() }, "30m")
+        const emailVerificationToken = generateToken({ id: user._id.toString() }, "7d")
 
-        const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`
-
-        const token: string = generateToken({ id: user._id.toString() }, "7d")
+        const url = `${process.env.BACKEND_URL}/activate/${emailVerificationToken}`
 
         // sendVerificationEmail(user.email, user.first_name, url)
+        
+        const token: string = generateToken({ id: user._id.toString() }, "7d")
 
         return res.status(200).json({
             id: user._id,
@@ -79,11 +81,14 @@ export const register = async (req: Request, res: Response) => {
     }
 }
 
-export const activateAccount = async (req: Request, res: Response) => {
+export const activateAccount = async (req: injectedRequest, res: Response) => {
     try {
         const { token } = req.body
+        // const reqUserId = req.user?.id
         const user: { id: string } = jwt.verify(token, process.env.TOKEN_SECRET) as { id: string };
         const check = await UserModel.findById(user.id);
+
+        // if(reqUserId !== user.id || reqUserId !== check._id.toString()) return res.status(400).json({ message: "The token does not belong to the logged in account, log into your account and try activating again!" });
 
         if (check.verified === true) return res.status(400).json({ message: "this email is already activated!" });
 
@@ -134,5 +139,25 @@ export const auth = (req: Request,res: Response) => {
     }catch(error: any){
         res.status(500).json(error.message)
         console.log("[AUTH_USER]", error)
+    }
+}
+
+export const sendVerification = async (req: injectedRequest, res: Response) => {
+    try{
+        const userId = req.user.id
+        const user = await UserModel.findById(userId) 
+
+        if(user.verified) return res.status(400).json({message: "Your account email is already verified!,you can report bug if something is wrong!"})
+
+        const emailVerificationToken = generateToken({ id: user._id.toString() }, "7d")
+        const url = `${process.env.BACKEND_URL}/activate/${emailVerificationToken}`
+
+        sendVerificationEmail(user.email, user.first_name, url)
+
+        return res.status(200).json({message: "email verification link has been sent, check your mail inbox"})
+        
+    }catch(error: any){
+        console.log("[SEND_VERIFICATION]",error)
+        return res.status(500).json(error.message)
     }
 }
