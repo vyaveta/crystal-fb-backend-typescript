@@ -1,6 +1,5 @@
-import { uploadImages } from "../controllers/upload"
 import express from "express"
-import { authUser } from "../middlewares/auth"
+import { uploadImages } from "../controllers/upload"
 import { imageUploadMiddleware } from "../middlewares/image-upload"
 
 const uploadRouter = express.Router()

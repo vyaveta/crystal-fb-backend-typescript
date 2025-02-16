@@ -18,7 +18,7 @@ export const validateLength = (data: string, min: number, max: number): boolean 
     return true
 }
 
-export const validateUsername = async (username: string) => {
+export const validateUsername = async (username: string) : Promise<string> => {
     let flag = false 
     do {
         let checkUsername = await UserModel.findOne({username})

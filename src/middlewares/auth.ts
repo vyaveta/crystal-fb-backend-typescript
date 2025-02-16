@@ -1,7 +1,8 @@
-import { NextFunction, Request, Response } from "express"
+import { NextFunction, Response } from "express"
+import { injectedRequest } from "interfaces/request-body.interface"
 import jwt from "jsonwebtoken"
 
-export const authUser = async (req: Request, res: Response, next: NextFunction) => {
+export const authUser = async (req: injectedRequest, res: Response, next: NextFunction) => {
     try{
         const authHeader = req.headers.authorization
         if(!authHeader) return res.status(400).json({message: "invalid authentificaiton!!"})

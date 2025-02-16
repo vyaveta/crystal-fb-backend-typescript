@@ -6,6 +6,7 @@ import compression from "compression"
 import cors from "cors"
 import mongoose from "mongoose"
 import dotenv from "dotenv"
+const fileUpload = require("express-fileupload")
 const userRouter = require('./routes/user.ts')
 import uploadRouter from "./routes/upload"
 
@@ -20,8 +21,12 @@ app.use(cors({
 }))
 app.use(compression())
 app.use(cookieParser())
-app.use(express.json()) 
-// app.use(bodyParser.json())
+app.use(express.json())
+app.use(bodyParser.json())
+app.use(fileUpload({
+    useTempfiles: true,
+}
+))
 
 app.options("*", function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -33,8 +38,8 @@ app.options("*", function (req, res, next) {
     res.sendStatus(200);
 });
 
-app.use("/", userRouter )
-app.use("/upload", uploadRouter )
+app.use("/", userRouter)
+app.use("/upload", uploadRouter)
 
 
 const server = http.createServer(app)
@@ -45,4 +50,3 @@ mongoose.Promise = Promise
 mongoose.connect(process.env.DATABASE_URL)
 mongoose.connection.on("error", (error: Error) => console.log("[MONGODB_CONNECTION]", error))
 mongoose.connection.on("connected", () => console.log("db connection success"))
-

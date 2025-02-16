@@ -10,8 +10,6 @@ import jwt from "jsonwebtoken"
 
 export const register = async (req: Request, res: Response) => {
     try {
-
-        console.log(req.body,'Is the req body')
         const {
             first_name,
             last_name,
@@ -22,7 +20,6 @@ export const register = async (req: Request, res: Response) => {
             gender,
             password,
         }: UserDetails = req.body;
-
 
         //validations
         const requiredFields = ['first_name', 'last_name', 'email', 'bYear', 'bMonth', 'bDay', 'gender', 'password',];
